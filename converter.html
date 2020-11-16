@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CSV CONVERTER</title>
+
+<style>
+@font-face {
+	font-family: 'hoge';
+	src: url('../font/Hina2ndGrade.ttf') format('truetype');
+}
+
+* {
+	font-family: 'hoge';
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	background-color: #aaa;
+	display: block;
+}
+
+header {
+	background: linear-gradient(-0deg, #666, #bbb, #666);
+	padding: 5px 0;
+	margin: 0;
+	font-size: 30px;
+	padding-left: 5%;
+	color: #eee;
+	border-top: solid 3px #222;
+	border-bottom: solid 3px #222;
+}
+
+.user {
+	background: linear-gradient(-0deg, #666, #bbb, #666);
+	padding: 5px 5px 10px 10px;
+	border-top: solid 3px #222;
+	border-bottom: solid 3px #222;
+}
+
+.component {
+	display: block;
+	padding: 5px 0;
+}
+
+.label {
+	background: linear-gradient(-0deg, #999, #eee, #999);
+	display: inline-block;
+	background-color: #eef;
+	width: 150px;
+	border: solid 1px #444;
+	padding: 0 5px 0 5px;
+	margin-right: 5px;
+	vertical-align: top;
+}
+
+#format {
+	width: 60%;
+	border: none;
+	padding: 3px 5px;
+	border-radius: 3px;
+}
+
+#csv {
+	width: 60%;
+	border: solid 2px #ff0000;
+	background-color: #fcc;
+}
+
+.user span {
+	width: 30%;
+}
+
+.btn {
+	display: inline-block;
+	padding: 0.3em 1em;
+	text-decoration: none;
+	color: #67c5ff;
+	border: solid 2px #67c5ff;
+	border-radius: 3px;
+	transition: .4s;
+	margin: 5px 10px;
+	font-size: 22px;
+}
+
+.btn:hover {
+	background: #67c5ff;
+	color: white;
+}
+
+#result {
+	background-color: #ccd;
+}
+</style>
+<head>
+<body>
+
+	<header>
+		<p>CSV FROMAT REPLACER</p>
+	</header>
+
+	<div class="user">
+		<div class="component">
+			<div class="label">
+				<span>format: </span>
+			</div>
+			<input id="format"></input>
+		</div>
+		<div class="component">
+			<div class="label">
+				<span>csv: </span>
+			</div>
+			<textarea id="csv" rows="14" cols="40"></textarea>
+		</div>
+		<button class="btn" onclick="convert()">CONVERT!</button>
+		<button class="btn" onclick="selectDomElm(result)">ALL COPY</button>
+	</div>
+	<div id="result"></div>
+
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script>
+        window.onload = function() {
+        }
+
+        function convert() {
+            var fmt = document.getElementById("format").value;
+            var csv = document.getElementById("csv").value;
+
+            var lines = csv.split('\n');
+
+            var args = lines[0].split('\t');
+            var result = "";
+            for (var i = 1; i < lines.length; i++) {
+                var line = lines[i].split('\t');
+                var base = fmt;
+                for (var j = 0; j < args.length; j++) {
+                    var arg = "\\$" + args[j];
+                    base = base.replace(eval("/" + arg + "/g"), line[j]);
+                }
+                result += base + '<br>';
+            }
+            document.getElementById("result").innerHTML = result;
+        }
+
+        function save() {
+            var dbName = 'sampleDB';
+            var openReq = indexedDB.open(dbName);
+        }
+
+        // テキストエリア以外で要素内を選択する
+        function selectDomElm(obj) {
+            // Rangeオブジェクトの取得
+            var range = document.createRange();
+            // 範囲の指定
+            range.selectNodeContents(obj);
+
+            // Selectionオブジェクトを返す。ユーザが選択した範囲が格納されている
+            var selection = window.getSelection();
+            // 選択をすべてクリア
+            selection.removeAllRanges();
+            // 新規の範囲を選択に指定
+            selection.addRange(range);
+
+            document.execCommand('copy');
+        }
+    </script>
+</body>
+</html>
